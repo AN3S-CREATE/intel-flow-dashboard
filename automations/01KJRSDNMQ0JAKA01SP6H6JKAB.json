@@ -1,0 +1,8 @@
+{
+  "version": "2",
+  "flowTitle": "OSINT: Weekly Monitoring (High Priority)",
+  "trigger": {
+    "type": "EMPTY"
+  },
+  "actions": []
+}

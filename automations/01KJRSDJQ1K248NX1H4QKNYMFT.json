@@ -1,0 +1,292 @@
+{
+  "version": "2",
+  "flowTitle": "OSINT: Intake → Queue",
+  "trigger": {
+    "valid": false,
+    "displayName": "New Target Added",
+    "type": "PIECE_TRIGGER",
+    "settings": {
+      "pieceName": "@taskade/automade-internalpiece-taskade",
+      "pieceVersion": "1.0.0",
+      "triggerName": "task.added",
+      "input": {}
+    }
+  },
+  "actions": [
+    {
+      "name": "a0000001-0000-0000-0000-000000000001",
+      "valid": true,
+      "displayName": "Parse Target Info with AI",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-openai",
+        "pieceVersion": "1.0.0",
+        "actionName": "ai.ask",
+        "input": {
+          "input": "{{ trigger[\"nodeText\"] }}",
+          "prompt": "You are parsing a new OSINT target record. Extract the target name from the task content. Return a JSON object with: { targetName, jobPrefix }. The jobPrefix should be the first 30 characters of the name. Task content:"
+        }
+      }
+    },
+    {
+      "name": "a0000001-0000-0000-0000-000000000002",
+      "valid": false,
+      "displayName": "Create Discovery Job",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-taskade",
+        "pieceVersion": "1.0.0",
+        "actionName": "task.create",
+        "input": {
+          "fields": {
+            "@job01": {
+              "data": {
+                "value": "{{ trigger[\"nodeId\"] }}"
+              },
+              "rank": "0",
+              "fieldId": "@job01"
+            },
+            "@job02": {
+              "data": {
+                "value": "jt-discovery"
+              },
+              "rank": "1",
+              "fieldId": "@job02"
+            },
+            "@job03": {
+              "data": {
+                "value": "rs-pending"
+              },
+              "rank": "2",
+              "fieldId": "@job03"
+            },
+            "@job05": {
+              "data": {
+                "value": "10"
+              },
+              "rank": "3",
+              "fieldId": "@job05"
+            },
+            "@job06": {
+              "data": {
+                "value": "0"
+              },
+              "rank": "4",
+              "fieldId": "@job06"
+            },
+            "@job08": {
+              "data": {
+                "value": "Discovery Agent"
+              },
+              "rank": "5",
+              "fieldId": "@job08"
+            }
+          },
+          "content": "Discovery — {{ trigger[\"nodeText\"] }}",
+          "position": "beforeend",
+          "projectId": {
+            "type": "flow-template-variable-input-type",
+            "id": "BqSGm5WZhYX5L2Lo"
+          }
+        }
+      }
+    },
+    {
+      "name": "a0000001-0000-0000-0000-000000000003",
+      "valid": false,
+      "displayName": "Create Scrape Job",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-taskade",
+        "pieceVersion": "1.0.0",
+        "actionName": "task.create",
+        "input": {
+          "fields": {
+            "@job01": {
+              "data": {
+                "value": "{{ trigger[\"nodeId\"] }}"
+              },
+              "rank": "0",
+              "fieldId": "@job01"
+            },
+            "@job02": {
+              "data": {
+                "value": "jt-scrape"
+              },
+              "rank": "1",
+              "fieldId": "@job02"
+            },
+            "@job03": {
+              "data": {
+                "value": "rs-pending"
+              },
+              "rank": "2",
+              "fieldId": "@job03"
+            },
+            "@job05": {
+              "data": {
+                "value": "10"
+              },
+              "rank": "3",
+              "fieldId": "@job05"
+            },
+            "@job06": {
+              "data": {
+                "value": "0"
+              },
+              "rank": "4",
+              "fieldId": "@job06"
+            },
+            "@job08": {
+              "data": {
+                "value": "Scraper Agent"
+              },
+              "rank": "5",
+              "fieldId": "@job08"
+            }
+          },
+          "content": "Scrape — {{ trigger[\"nodeText\"] }}",
+          "position": "beforeend",
+          "projectId": {
+            "type": "flow-template-variable-input-type",
+            "id": "BqSGm5WZhYX5L2Lo"
+          }
+        }
+      }
+    },
+    {
+      "name": "a0000001-0000-0000-0000-000000000004",
+      "valid": false,
+      "displayName": "Create Cross-check Job",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-taskade",
+        "pieceVersion": "1.0.0",
+        "actionName": "task.create",
+        "input": {
+          "fields": {
+            "@job01": {
+              "data": {
+                "value": "{{ trigger[\"nodeId\"] }}"
+              },
+              "rank": "0",
+              "fieldId": "@job01"
+            },
+            "@job02": {
+              "data": {
+                "value": "jt-crosscheck"
+              },
+              "rank": "1",
+              "fieldId": "@job02"
+            },
+            "@job03": {
+              "data": {
+                "value": "rs-pending"
+              },
+              "rank": "2",
+              "fieldId": "@job03"
+            },
+            "@job05": {
+              "data": {
+                "value": "30"
+              },
+              "rank": "3",
+              "fieldId": "@job05"
+            },
+            "@job06": {
+              "data": {
+                "value": "0"
+              },
+              "rank": "4",
+              "fieldId": "@job06"
+            },
+            "@job08": {
+              "data": {
+                "value": "Cross-check Agent"
+              },
+              "rank": "5",
+              "fieldId": "@job08"
+            }
+          },
+          "content": "Cross-check — {{ trigger[\"nodeText\"] }}",
+          "position": "beforeend",
+          "projectId": {
+            "type": "flow-template-variable-input-type",
+            "id": "BqSGm5WZhYX5L2Lo"
+          }
+        }
+      }
+    },
+    {
+      "name": "a0000001-0000-0000-0000-000000000005",
+      "valid": false,
+      "displayName": "Create Report Job",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-taskade",
+        "pieceVersion": "1.0.0",
+        "actionName": "task.create",
+        "input": {
+          "fields": {
+            "@job01": {
+              "data": {
+                "value": "{{ trigger[\"nodeId\"] }}"
+              },
+              "rank": "0",
+              "fieldId": "@job01"
+            },
+            "@job02": {
+              "data": {
+                "value": "jt-report"
+              },
+              "rank": "1",
+              "fieldId": "@job02"
+            },
+            "@job03": {
+              "data": {
+                "value": "rs-pending"
+              },
+              "rank": "2",
+              "fieldId": "@job03"
+            },
+            "@job05": {
+              "data": {
+                "value": "60"
+              },
+              "rank": "3",
+              "fieldId": "@job05"
+            },
+            "@job06": {
+              "data": {
+                "value": "0"
+              },
+              "rank": "4",
+              "fieldId": "@job06"
+            },
+            "@job08": {
+              "data": {
+                "value": "Report Agent"
+              },
+              "rank": "5",
+              "fieldId": "@job08"
+            }
+          },
+          "content": "Report — {{ trigger[\"nodeText\"] }}",
+          "position": "beforeend",
+          "projectId": {
+            "type": "flow-template-variable-input-type",
+            "id": "BqSGm5WZhYX5L2Lo"
+          }
+        }
+      }
+    }
+  ],
+  "variables": {
+    "BqSGm5WZhYX5L2Lo": {
+      "id": "BqSGm5WZhYX5L2Lo",
+      "rank": "V",
+      "type": "string",
+      "format": "taskade-project-id"
+    }
+  }
+}

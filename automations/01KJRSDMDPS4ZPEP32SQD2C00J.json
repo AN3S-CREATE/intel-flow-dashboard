@@ -1,0 +1,71 @@
+{
+  "version": "2",
+  "flowTitle": "OSINT: Scheduled Runner (Rate-Limited)",
+  "trigger": {
+    "valid": true,
+    "displayName": "Hourly Schedule — Process Job Queue",
+    "type": "PIECE_TRIGGER",
+    "settings": {
+      "pieceName": "@taskade/automade-internalpiece-schedule",
+      "pieceVersion": "1.0.0",
+      "triggerName": "schedule.hourly",
+      "input": {}
+    }
+  },
+  "actions": [
+    {
+      "name": "b0000001-0000-0000-0000-000000000001",
+      "valid": false,
+      "displayName": "Find Next Pending Job",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-taskade",
+        "pieceVersion": "1.0.0",
+        "actionName": "tasks.find",
+        "input": {
+          "projectId": {
+            "type": "flow-template-variable-input-type",
+            "id": "BqSGm5WZhYX5L2Lo"
+          },
+          "rowsToReturn": "first_matching_row",
+          "noTasksFoundBehavior": "continue"
+        }
+      }
+    },
+    {
+      "name": "b0000001-0000-0000-0000-000000000002",
+      "valid": true,
+      "displayName": "AI: Determine Job Type & Build Discovery URLs",
+      "type": "PIECE",
+      "settings": {
+        "pieceName": "@taskade/automade-internalpiece-openai",
+        "pieceVersion": "1.0.0",
+        "actionName": "ai.ask",
+        "input": {
+          "input": "{{ trigger[\"triggerTime\"] }} — Job Queue Processing Run",
+          "prompt": "You are a rate-limited OSINT job processor. Analyze the pending job info and determine what action to take. For Discovery jobs, generate a prioritized list of up to 10 public search queries or registry URLs for the target. Prefer: company registries (SEC EDGAR, Companies House, OpenCorporates), regulatory bodies (FCA, FINRA, OFAC), court portals, then reputable news. Return structured JSON with: { jobType, targetName, actionsTaken, urlsToScrape, notes }. Safety: only public sources, no personal addresses or private contact data. Job info:"
+        }
+      }
+    },
+    {
+      "name": "b0000001-0000-0000-0000-000000000003",
+      "valid": true,
+      "displayName": "Rate Limit Delay (10s)",
+      "type": "SLEEP",
+      "settings": {
+        "timeSetting": {
+          "type": "duration",
+          "duration": "PT10S"
+        }
+      }
+    }
+  ],
+  "variables": {
+    "BqSGm5WZhYX5L2Lo": {
+      "id": "BqSGm5WZhYX5L2Lo",
+      "rank": "V",
+      "type": "string",
+      "format": "taskade-project-id"
+    }
+  }
+}
